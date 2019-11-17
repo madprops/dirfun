@@ -1,1 +1,1 @@
-sudo cp release/dirfun /bin/dirfun
+sudo cp bin/dirfun /bin/dirfun

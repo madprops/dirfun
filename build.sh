@@ -1,1 +1,1 @@
-nim compile -d:release -o=release/dirfun src/dirfun.nim
+nim compile -d:release -o=bin/dirfun src/dirfun.nim

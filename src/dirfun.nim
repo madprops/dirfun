@@ -19,7 +19,7 @@ const example = "" &
 "# Use tabs to create the structure.\n" &
 "# Use 'file' at the beginning to create a file.\n" &
 "\n" &
-"# Example:" &
+"# Example:\n" &
 "\n" &
 "~/dirfuntest\n" &
 "\twork\n" &
