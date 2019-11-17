@@ -72,7 +72,7 @@ proc create(path:string, cmode:string) =
         inc(dirs_created)
     except:
       error("Can't create directory: {path}")
-      return
+      quit(0)
   
   # Create file
   elif cmode == "file":
@@ -83,7 +83,7 @@ proc create(path:string, cmode:string) =
         inc(files_created)
     except:
       error("Can't create file: {path}")
-      return
+      quit(0)
 
 proc process(input: string, just_check=false) =
   if input.strip() == "":
