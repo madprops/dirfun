@@ -1,0 +1,1 @@
+sudo cp release/dirfun /bin/dirfun
