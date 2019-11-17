@@ -198,7 +198,7 @@ proc exit_altscreen() =
   echo "\u001b[?1049l"
   
 proc edit(content=""): string =
-  let editor = "nano -it -ET2"
+  let editor = "nano -it -T4"
   let tmpPath = getTempDir() / "userInputString"
   let tmpFile = tmpPath / $getpid()
   createDir tmpPath
