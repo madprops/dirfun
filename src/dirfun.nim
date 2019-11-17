@@ -125,12 +125,13 @@ proc process(input: string, just_check=false) =
     current_level = level
 
     var path = line.strip()
-    if path == "": continue
     if path.startsWith("#"): continue
 
     if path.startswith("file "):
       path = path.replace(re"^file ", "").strip()
       cmode = "file"
+    
+    if path == "": continue
 
     # Top level
     if level == 0:
@@ -138,7 +139,6 @@ proc process(input: string, just_check=false) =
         error("Root paths can't be files.")
         return
       path = expandTilde(path)
-      echo path
       if not path.startsWith("/"):
         error("Root paths must be absolute.")
         return
