@@ -12,7 +12,7 @@ var last_path = ("", "")
 var current_level = 0
 var dirs_created = 0
 var files_created = 0
-var input = ""
+var script = ""
 
 const example = "" &
 "# List all directories and files to create.\n" &
@@ -85,9 +85,9 @@ proc create(path:string, cmode:string) =
       error("Can't create file: {path}")
       quit(0)
 
-proc process(input: string, just_check=false) =
-  if input.strip() == "":
-    echo "Empty input."
+proc process(script: string, just_check=false) =
+  if script.strip() == "":
+    echo "Empty script."
     return
   current_dir = getCurrentDir()
   last_path = ("", "")
@@ -95,7 +95,7 @@ proc process(input: string, just_check=false) =
   files_created = 0
   current_level = 0
 
-  let files = input.splitLines
+  let files = script.splitLines
 
   for i, line in files:
     var cmode = "dir"
@@ -227,7 +227,7 @@ when isMainModule:
   
     case ans
     of "e": 
-      input = edit(input)
+      script = edit(script)
       eraseScreen()
     of "h": 
       discard edit(example)
@@ -237,10 +237,10 @@ when isMainModule:
       process(example)
     of "k":
       eraseScreen()
-      process(input, true)
+      process(script, true)
     of "c":
       eraseScreen()
-      process(input)
+      process(script)
     of "q":
       exit_altscreen()
       break
