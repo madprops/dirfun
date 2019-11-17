@@ -14,15 +14,28 @@ var dirs_created = 0
 var files_created = 0
 var input = ""
 
-var example = "# List all directories and files to create.\n" &
+const example = "" &
+"# List all directories and files to create.\n" &
 "# Use tabs to create the structure.\n" &
-"# Use 'file' at the beginning to create a file.\n\n" &
-"# Example:\n\n" &
+"# Use 'file' at the beginning to create a file.\n" &
+"\n" &
+"# Example:" &
+"\n" &
 "~/dirfuntest\n" &
-"\twork\n\t\tprograms\n\t\t\tfile db.sql\n\t\t\tfile raid.exe\n" &
-"\tstuff\n\t\tfile coffee.js\n\t\tfile food.sh\n\t\tfile code.nim\n" &
-"\tpics\n\t\tnice_pics\n\t\tgreat_pics\n\t\thuge_pics\n" &
-"\t\t\twallpapers\n\t\t\t\tfile murica.fuckyeah"
+"\twork\n" &
+"\t\tprograms\n" &
+"\t\t\tfile db.sql\n" &
+"\t\t\tfile raid.exe\n" &
+"\tstuff\n" &
+"\t\tfile coffee.js\n" &
+"\t\tfile food.sh\n" &
+"\t\tfile code.nim\n" &
+"\tpics\n" &
+"\t\tnice_pics\n" &
+"\t\tgreat_pics\n" &
+"\t\thuge_pics\n" &
+"\t\t\twallpapers\n" &
+"\t\t\t\tfile murica.fuckyeah"
 
 proc log(text:string, color="", colormode="all") =
   var cs = ""
@@ -37,11 +50,6 @@ proc log(text:string, color="", colormode="all") =
     let t1 = split[0].strip()
     let t2 = split[1].strip()
     echo &"{cs}{t1}:{ansiResetCode} {t2}"
-
-proc homerep(path:string): string =
-  if path.startsWith("~"):
-    return path.replace(re"^~/", getHomeDir())
-  return path
 
 proc pname(s:string, n:int): string =
   if n != 1:
@@ -129,7 +137,8 @@ proc process(input: string, just_check=false) =
       if cmode == "file":
         error("Root paths can't be files.")
         return
-      path = homerep(path)
+      path = expandTilde(path)
+      echo path
       if not path.startsWith("/"):
         error("Root paths must be absolute.")
         return
@@ -189,7 +198,7 @@ proc exit_altscreen() =
   echo "\u001b[?1049l"
   
 proc edit(content=""): string =
-  let editor = "nano -it"
+  let editor = "nano -it -ET2"
   let tmpPath = getTempDir() / "userInputString"
   let tmpFile = tmpPath / $getpid()
   createDir tmpPath
