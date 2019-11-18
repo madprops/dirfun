@@ -25,10 +25,10 @@ proc create(path:string, cmode:string, extra:string="") =
     try:
       if not existsDir(path):
         createDir(path)
-        info(&"Directory: {path}")
+        info(&"Directory: {smalldir(path)}")
         inc(dirs_created)
     except:
-      error("Can't create directory: {path}")
+      error("Can't create directory: {smalldir(path)}")
       quit(0)
   
   # Create file
@@ -36,10 +36,10 @@ proc create(path:string, cmode:string, extra:string="") =
     try:
       if not existsFile(path):
         writeFile(path, "")
-        info(&"File: {path}")
+        info(&"File: {smalldir(path)}")
         inc(files_created)
     except:
-      error("Can't create file: {path}")
+      error("Can't create file: {smalldir(path)}")
       quit(0)
   
   elif cmode == "text":
@@ -47,15 +47,15 @@ proc create(path:string, cmode:string, extra:string="") =
     try:
       content = readFile(path)
     except:
-      error(&"Can't read file: {path}")
+      error(&"Can't read file: {smalldir(path)}")
       quit(0)
     try:
       if content != "":
         content.add("\n")
-      info(&"Text: {path}")
+      info(&"Text: {smalldir(path)}")
       writeFile(path, &"{content}{extra}")
     except:
-      error(&"Can't write to file: {path}")
+      error(&"Can't write to file: {smalldir(path)}")
       quit(0)
 
 proc process(script: string, just_check=false) =
@@ -187,7 +187,7 @@ proc process(script: string, just_check=false) =
 proc edit(content=""): string =
   let editor = case conf.editor
   of "vim": "vim -c 'set autoindent tabstop=4'"
-  else: "nano -it -T4"
+  else: "nano -itx -T4"
   let tmpPath = getTempDir() / "userInputString"
   let tmpFile = tmpPath / $getpid()
   createDir tmpPath

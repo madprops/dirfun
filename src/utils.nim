@@ -1,3 +1,4 @@
+import os
 import nre
 import terminal
 import strformat
@@ -48,3 +49,7 @@ proc to_bottom*() =
 
 proc clear*() =
   eraseScreen()
+
+proc smalldir*(path:string): string =
+  let str = re(&"^{getHomeDir()}")
+  path.replace(str, "~/")
