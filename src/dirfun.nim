@@ -97,12 +97,13 @@ proc process(script: string, just_check=false) =
   files_created = 0
   current_level = 0
 
-  let files = script.splitLines
+  let lines = script.splitLines
 
-  for i, line in files:
+  for i, line in lines:
     var cmode = "dir"
     var direction = ""
-
+    if line.strip() == "": continue
+    
     let m = line.find(re"^(\t+)")
 
     let level = if m.isSome:
