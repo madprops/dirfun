@@ -58,7 +58,7 @@ proc create(path:string, cmode:string, extra:string="") =
       error(&"Can't write to file: {smalldir(path)}")
       quit(0)
 
-proc process(script: string, just_check=false) =
+proc process(script: string, mode="check") =
   if script.strip() == "":
     echo "Empty script."
     return
@@ -165,13 +165,16 @@ proc process(script: string, just_check=false) =
     
     last_path = (path, cmode)
 
-    if not just_check:
+    if mode == "run":
       create(path, cmode, extra)
   
   # On completion
   
-  if just_check:
+  if mode == "check":
     echo "Looks good."
+    return
+  elif mode == "runcheck":
+    process(script, "run")
     return
 
   if dirs_created > 0 or files_created > 0:
@@ -187,7 +190,7 @@ proc process(script: string, just_check=false) =
 proc edit(content=""): string =
   let editor = case conf.editor
   of "vim": "vim -c 'set autoindent tabstop=4'"
-  else: "nano -itx -T4"
+  else: "nano -it -T4"
   let tmpPath = getTempDir() / "userInputString"
   let tmpFile = tmpPath / $getpid()
   createDir tmpPath
@@ -219,7 +222,7 @@ when isMainModule:
     try:
       script = readFile(conf.path)
       if conf.run:
-        process(script)
+        process(script, "runcheck")
         quit(0)
     except:
       error("Can't read script file.")
@@ -240,13 +243,13 @@ when isMainModule:
       clear()
     of "H": 
       clear()
-      process(example)
+      process(example, "runcheck")
     of "k":
       clear()
-      process(script, true)
+      process(script, "check")
     of "c":
       clear()
-      process(script)
+      process(script, "runcheck")
     of "q":
       exit_altscreen()
       break
