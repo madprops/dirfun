@@ -1,11 +1,13 @@
+import constants
+import utils
 import config
+
 import os
 import osproc
 import posix
 import nre
 import strutils
 import strformat
-import terminal
 import rdstdin
 
 var conf: Config
@@ -15,54 +17,6 @@ var current_level = 0
 var dirs_created = 0
 var files_created = 0
 var script = ""
-
-const example = "" &
-"# List all directories and files to create.\n" &
-"# Use tabs to create the structure.\n" &
-"# Use 'file' at the beginning to create a file.\n" &
-"\n" &
-"# Example:\n" &
-"\n" &
-"~/dirfuntest\n" &
-"\twork\n" &
-"\t\tprograms\n" &
-"\t\t\tfile db.sql\n" &
-"\t\t\tfile raid.exe\n" &
-"\tstuff\n" &
-"\t\tfile coffee.js\n" &
-"\t\tfile food.sh\n" &
-"\t\tfile code.nim\n" &
-"\tpics\n" &
-"\t\tnice_pics\n" &
-"\t\tgreat_pics\n" &
-"\t\thuge_pics\n" &
-"\t\t\twallpapers\n" &
-"\t\t\t\tfile murica.fuckyeah"
-
-proc log(text:string, color="", colormode="all") =
-  var cs = ""
-  case color
-  of "green": cs = ansiForegroundColorCode(fgGreen)
-  of "cyan": cs = ansiForegroundColorCode(fgCyan)
-  of "red": cs = ansiForegroundColorCode(fgRed)
-  if colormode == "all":
-    echo &"{cs}{text}{ansiResetCode}"
-  elif colormode == "start":
-    let split = text.split(": ")
-    let t1 = split[0].strip()
-    let t2 = split[1].strip()
-    echo &"{cs}{t1}:{ansiResetCode} {t2}"
-
-proc pname(s:string, n:int): string =
-  if n != 1:
-    if s.endsWith("y"):
-      return s.replace(re"y$", "ies")
-    else:
-      return &"{s}s"
-  return s
-
-proc error(message:string) =
-  log(&"Error: {message}", "red", "start")
 
 proc create(path:string, cmode:string) = 
   # Create dir
@@ -192,12 +146,6 @@ proc process(script: string, just_check=false) =
       log(&"{files_created} {pfn} created.", "green")
   else:
     log("Nothing was created.")
-
-proc enter_altscreen() =
-  echo "\u001b[?1049h"
-
-proc exit_altscreen() =
-  echo "\u001b[?1049l"
   
 proc edit(content=""): string =
   let editor = case conf.editor
@@ -211,7 +159,7 @@ proc edit(content=""): string =
   enter_altscreen()
   return tmpFile.readFile
   
-  # Main
+# Main
 when isMainModule:
   conf = get_config()
 
@@ -226,7 +174,7 @@ when isMainModule:
       quit(0)
   
   enter_altscreen()
-  cursorDown(stdout, terminalHeight())
+  to_bottom()
   
   while true:
 
@@ -244,20 +192,20 @@ when isMainModule:
     case ans
     of "e": 
       script = edit(script)
-      eraseScreen()
+      clear()
     of "h": 
       discard edit(example)
-      eraseScreen()
+      clear()
     of "H": 
-      eraseScreen()
+      clear()
       process(example)
     of "k":
-      eraseScreen()
+      clear()
       process(script, true)
     of "c":
-      eraseScreen()
+      clear()
       process(script)
     of "q":
       exit_altscreen()
       break
-    else: eraseScreen()
+    else: clear()
