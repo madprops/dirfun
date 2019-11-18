@@ -1,3 +1,4 @@
+import config
 import os
 import osproc
 import posix
@@ -7,6 +8,7 @@ import strformat
 import terminal
 import rdstdin
 
+var conf: Config
 var current_dir = ""
 var last_path = ("", "")
 var current_level = 0
@@ -198,7 +200,9 @@ proc exit_altscreen() =
   echo "\u001b[?1049l"
   
 proc edit(content=""): string =
-  let editor = "nano -it -T4"
+  let editor = case conf.editor
+  of "vim": "vim -c 'set autoindent tabstop=4'"
+  else: "nano -it -T4"
   let tmpPath = getTempDir() / "userInputString"
   let tmpFile = tmpPath / $getpid()
   createDir tmpPath
@@ -206,9 +210,21 @@ proc edit(content=""): string =
   discard execCmd(editor & " " & tmpFile)
   enter_altscreen()
   return tmpFile.readFile
-
-# Main
+  
+  # Main
 when isMainModule:
+  conf = get_config()
+
+  if conf.path != "":
+    try:
+      script = readFile(conf.path)
+      if conf.run:
+        process(script)
+        quit(0)
+    except:
+      error("Can't read script file.")
+      quit(0)
+  
   enter_altscreen()
   cursorDown(stdout, terminalHeight())
   
