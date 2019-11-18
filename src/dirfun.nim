@@ -16,15 +16,16 @@ var last_path = ("", "")
 var current_level = 0
 var dirs_created = 0
 var files_created = 0
+var used_file = ""
 var script = ""
 
-proc create(path:string, cmode:string) = 
+proc create(path:string, cmode:string, extra:string="") = 
   # Create dir
   if cmode == "dir":
     try:
       if not existsDir(path):
         createDir(path)
-        log(&"Directory: {path}", "cyan", "start")
+        info(&"Directory: {path}")
         inc(dirs_created)
     except:
       error("Can't create directory: {path}")
@@ -35,31 +36,50 @@ proc create(path:string, cmode:string) =
     try:
       if not existsFile(path):
         writeFile(path, "")
-        log(&"File: {path}", "cyan", "start")
+        info(&"File: {path}")
         inc(files_created)
     except:
       error("Can't create file: {path}")
+      quit(0)
+  
+  elif cmode == "text":
+    var content = ""
+    try:
+      content = readFile(path)
+    except:
+      error(&"Can't read file: {path}")
+      quit(0)
+    try:
+      if content != "":
+        content.add("\n")
+      info(&"Text: {path}")
+      writeFile(path, &"{content}{extra}")
+    except:
+      error(&"Can't write to file: {path}")
       quit(0)
 
 proc process(script: string, just_check=false) =
   if script.strip() == "":
     echo "Empty script."
     return
+
   current_dir = getCurrentDir()
   last_path = ("", "")
   dirs_created = 0
   files_created = 0
   current_level = 0
+  used_file = ""
 
   let lines = script.splitLines
 
   for i, line in lines:
     var cmode = "dir"
+    var extra = ""
     var direction = ""
     if line.strip() == "": continue
     let m = line.find(re"^(\t+)")
 
-    let level = if m.isSome:
+    var level = if m.isSome:
       m.get.captures[0].len
     else: 0
 
@@ -86,13 +106,16 @@ proc process(script: string, just_check=false) =
     if path.startswith("file "):
       path = path.replace(re"^file ", "").strip()
       cmode = "file"
-    
+    elif path.startsWith("text "):
+      path = path.replace(re"^text ", "").strip()
+      cmode = "text"
+
     if path == "": continue
 
     # Top level
     if level == 0:
-      if cmode == "file":
-        error("Root paths can't be files.")
+      if cmode != "dir":
+        error("Root paths must be directories.")
         return
       path = expandTilde(path)
       if not path.startsWith("/"):
@@ -107,9 +130,19 @@ proc process(script: string, just_check=false) =
         return
       
       if direction == "right":
-        if last_path[1] == "file":
+        if last_path[1] == "file" and cmode != "text":
           error("A file can't be a top level path.")
           return
+        if cmode == "text" and last_path[1] != "file":
+          error("Text must go inside file paths.")
+          return
+      
+      elif direction == "left":
+        if last_path[1] == "text":
+          dec(level)
+          dec(level_diff)
+      
+      used_file = ""
 
       if cmode == "dir":
         if direction == "left":
@@ -125,11 +158,15 @@ proc process(script: string, just_check=false) =
           path = current_dir
       elif cmode == "file":
         path = joinPath(current_dir, path)
+      elif cmode == "text":
+        used_file = last_path[0]
+        extra = path
+        path = used_file
     
     last_path = (path, cmode)
 
     if not just_check:
-      create(path, cmode)
+      create(path, cmode, extra)
   
   # On completion
   

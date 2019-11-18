@@ -31,6 +31,9 @@ proc pname*(s:string, n:int): string =
       return &"{s}s"
   return s
 
+proc info*(message:string) =
+  log(message, "cyan", "start")
+
 proc error*(message:string) =
   log(&"Error: {message}", "red", "start")
 

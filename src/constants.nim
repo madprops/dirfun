@@ -2,6 +2,7 @@ const example* = "" &
 "# List all directories and files to create.\n" &
 "# Use tabs to create the structure.\n" &
 "# Use 'file' at the beginning to create a file.\n" &
+"# Use 'text' at the beginning to write to a file.\n" &
 "\n" &
 "# Example:\n" &
 "\n" &
@@ -14,6 +15,8 @@ const example* = "" &
 "\t\tfile coffee.js\n" &
 "\t\tfile food.sh\n" &
 "\t\tfile code.nim\n" &
+"\t\t\ttext import nap\n" &
+"\t\t\ttext echo \"lounging\"\n" &
 "\tpics\n" &
 "\t\tnice_pics\n" &
 "\t\tgreat_pics\n" &
