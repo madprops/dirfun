@@ -158,6 +158,21 @@ proc edit(content=""): string =
   discard execCmd(editor & " " & tmpFile)
   enter_altscreen()
   return tmpFile.readFile
+
+proc print_menu() =
+  let cs = get_ansi("blue")
+  let cr = get_ansi("reset")
+  echo ""
+  echo &"({cs}e{cr}) Edit Script"
+  echo &"({cs}k{cr}) Check Script"
+  echo &"({cs}c{cr}) Create Stuff"
+  echo &"({cs}h{cr}) See Example"
+  echo &"({cs}H{cr}) Run Example"
+  echo &"({cs}q{cr}) Quit"
+  echo ""
+
+proc get_input(): string =
+  readLineFromStdin("Choice: ").strip()
   
 # Main
 when isMainModule:
@@ -177,19 +192,9 @@ when isMainModule:
   to_bottom()
   
   while true:
-
-    echo ""
-    echo "e) Edit Script"
-    echo "k) Check Script"
-    echo "c) Create Stuff"
-    echo "h) See Example"
-    echo "H) Run Example"
-    echo "q) Quit"
-    echo ""
-
-    let ans = readLineFromStdin("Choice: ").strip()
+    print_menu()
   
-    case ans
+    case get_input()
     of "e": 
       script = edit(script)
       clear()

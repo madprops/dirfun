@@ -3,19 +3,25 @@ import terminal
 import strformat
 import strutils
 
-proc log*(text:string, color="", colormode="all") =
-  var cs = ""
+proc get_ansi*(color:string): string =
   case color
-  of "green": cs = ansiForegroundColorCode(fgGreen)
-  of "cyan": cs = ansiForegroundColorCode(fgCyan)
-  of "red": cs = ansiForegroundColorCode(fgRed)
+  of "green": ansiForegroundColorCode(fgGreen)
+  of "cyan": ansiForegroundColorCode(fgCyan)
+  of "red": ansiForegroundColorCode(fgRed)
+  of "blue": ansiForegroundColorCode(fgBlue)
+  of "reset": ansiResetCode
+  else: ""
+
+proc log*(text:string, color="", colormode="all") =
+  let cs = get_ansi(color)
+  let cr = get_ansi("reset")
   if colormode == "all":
-    echo &"{cs}{text}{ansiResetCode}"
+    echo &"{cs}{text}{cr}"
   elif colormode == "start":
     let split = text.split(": ")
     let t1 = split[0].strip()
     let t2 = split[1].strip()
-    echo &"{cs}{t1}:{ansiResetCode} {t2}"
+    echo &"{cs}{t1}:{cr} {t2}"
 
 proc pname*(s:string, n:int): string =
   if n != 1:
