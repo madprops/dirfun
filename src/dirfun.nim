@@ -103,7 +103,6 @@ proc process(script: string, just_check=false) =
     var cmode = "dir"
     var direction = ""
     if line.strip() == "": continue
-    
     let m = line.find(re"^(\t+)")
 
     let level = if m.isSome:
