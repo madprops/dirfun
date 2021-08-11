@@ -1,2 +1,2 @@
-cd bin
-nim c -o:dirfun-debug -r ../src/dirfun.nim "${@:1}"
+#!/bin/bash
+nim compile --run -o:bin/dirfun src/dirfun.nim $@
