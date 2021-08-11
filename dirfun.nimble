@@ -12,4 +12,4 @@ bin           = @["dirfun"]
 # Dependencies
 
 requires "nim >= 1.0.0"
-requires "nap >= 1.4.2"
+requires "nap >= 2.0.0"
