@@ -1,4 +1,4 @@
-import nap
+import pkg/nap
 
 type Config* = object
   editor*: string

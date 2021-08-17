@@ -1,8 +1,8 @@
-import os
-import nre
-import terminal
-import strformat
-import strutils
+import std/os
+import std/nre
+import std/terminal
+import std/strformat
+import std/strutils
 
 proc get_ansi*(color:string): string =
   case color

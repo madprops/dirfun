@@ -1,14 +1,14 @@
+import std/os
+import std/osproc
+import std/posix
+import std/nre
+import std/strutils
+import std/strformat
+import std/rdstdin
 import constants
 import utils
 import config
 
-import os
-import osproc
-import posix
-import nre
-import strutils
-import strformat
-import rdstdin
 
 var conf: Config
 var current_dir = ""
